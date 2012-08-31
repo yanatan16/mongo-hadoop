@@ -317,9 +317,9 @@ object Resolvers {
 }
 
 object Dependencies {
-  val mongoJavaDriver = "org.mongodb" % "mongo-java-driver" % "2.7.3"
+  val mongoJavaDriver = "org.mongodb" % "mongo-java-driver" % "2.8.0"
   val junit = "junit" % "junit" % "4.10" % "test"
-  val flume = "com.cloudera" % "flume-core" % "0.9.4-cdh3u3"
+  val flume = "com.cloudera" % "flume-core" % "0.9.4-cdh3u5"
   val hiveSerDe = "org.apache.hive" % "hive-serde" % "0.9.0"
   val casbah = "org.mongodb" %% "casbah" % "2.3.0"
   val scoobi = "com.nicta" %% "scoobi" % "0.4.0" % "provided" 
