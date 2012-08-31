@@ -52,8 +52,7 @@ public class TypedBytesMongoInputFormat implements org.apache.hadoop.mapred.Inpu
 
     public InputSplit[] getSplits( JobConf job, int numSplits ){
         final MongoConfig conf = new MongoConfig( job );
-        InputSplit[] x = {};
-        return MongoSplitter.calculateSplits( conf ).toArray(x);
+        return MongoSplitter.calculateSplits( conf ).toArray(new InputSplit[0]);
     }
 
     public class TypedBytesMongoRecordReader implements RecordReader<TypedBytesWritable, TypedBytesWritable> {
