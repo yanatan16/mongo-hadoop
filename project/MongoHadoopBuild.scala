@@ -23,10 +23,14 @@ object MongoHadoopBuild extends Build {
   private val cdh3Rel = "cdh3u3"
   private val cdh3Hadoop = "0.20.2-%s".format(cdh3Rel) // current "base" version they patch against
   private val cdh3Pig = "0.8.1-%s".format(cdh3Rel)
-  private val cdh4Rel = "cdh4b1"
-  private val cdh4YarnHadoop = "0.23.0-%s".format(cdh4Rel) // current "base" version they patch against
-  private val cdh4CoreHadoop = "0.23.0-mr1-%s".format(cdh4Rel)
+  private val cdh4Rel = "cdh4.0.1"
+  private val cdh4YarnHadoop = "2.0.0-%s".format(cdh4Rel) // current "base" version they patch against
+  private val cdh4CoreHadoop = "2.0.0-mr1-%s".format(cdh4Rel)
   private val cdh4Pig = "0.9.2-%s".format(cdh4Rel)
+  private val cdh4Beta = "cdh4b1"
+  private val cdh4b1YarnHadoop = "0.23.0-%s".format(cdh4Beta) // current "base" version they patch against
+  private val cdh4b1CoreHadoop = "0.23.0-mr1-%s".format(cdh4Beta)
+  private val cdh4b1Pig = "0.9.2-%s".format(cdh4Beta)
 
   private val coreHadoopMap = Map("0.20" -> hadoopDependencies("0.20.205.0", false, stockPig),
                                   "0.20.x" -> hadoopDependencies("0.20.205.0", false, stockPig),
@@ -37,6 +41,7 @@ object MongoHadoopBuild extends Build {
                                   "0.23" -> hadoopDependencies("0.23.1", true, stockPig, nextGen=true),
                                   "0.23.x" -> hadoopDependencies("0.23.1", true, stockPig, nextGen=true),
                                   "cdh4" -> hadoopDependencies(cdh4CoreHadoop, true, cdh4Pig, Some(cdh4YarnHadoop), nextGen=true),
+                                  "cdh4b1" -> hadoopDependencies(cdh4b1CoreHadoop, true, cdh4b1Pig, Some(cdh4b1YarnHadoop), nextGen=true)
                                   "cdh3" -> hadoopDependencies(cdh3Hadoop, true, cdh3Pig),
                                   "1.0" -> hadoopDependencies("1.0.3", false, stockPig),
                                   "1.0.x" -> hadoopDependencies("1.0.3", false, stockPig),
@@ -263,7 +268,7 @@ object MongoHadoopBuild extends Build {
         
         if (hadoopVersion.startsWith("0.22")) {
             deps ++ Seq("org.apache.hadoop" % "hadoop-mapred" % altStreamingVer.getOrElse(hadoopVersion))
-        } else if (hadoopVersion.startsWith("0.23")) {
+        } else if (hadoopVersion.startsWith("0.23") || hadoopVersion.startsWith("2.0")) {
           deps ++ Seq(mrDep("core"), mrDep("common"), mrDep("shuffle"),
                       mrDep("shuffle"), mrDep("app"), mrDep("jobclient"))
         } else {
