@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.mongodb.hadoop;
+package com.mongodb.hadoop.streaming;
 
 // Mongo
 
 import com.mongodb.*;
+import com.mongodb.hadoop.*;
 import com.mongodb.hadoop.input.*;
 import com.mongodb.hadoop.util.*;
 import org.apache.commons.logging.*;
@@ -36,11 +37,11 @@ import java.util.*;
 // Java
 
 /**
-* TypedBytesMongoInputFormat is a wrapper the MongoInputFormat that transforms all input/output into TypedBytes.
+* TypedBytesMongoInputFormat is a wrapper the TypedBytesMongoInputFormat that transforms all input/output into TypedBytes.
 * This is done so Dumbo can use it.
 */
 public class TypedBytesMongoInputFormat extends InputFormat<TypedBytesWritable, TypedBytesWritable> {    
-    private static final Log LOG = LogFactory.getLog( MongoInputFormat.class );
+    private static final Log LOG = LogFactory.getLog( TypedBytesMongoInputFormat.class );
 
     @Override
     public RecordReader<TypedBytesWritable, TypedBytesWritable> createRecordReader( InputSplit split, TaskAttemptContext context ){
