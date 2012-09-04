@@ -43,7 +43,6 @@ import java.util.*;
 public class TypedBytesMongoInputFormat implements InputFormat<TypedBytesWritable, TypedBytesWritable> {    
     private static final Log LOG = LogFactory.getLog( TypedBytesMongoInputFormat.class );
 
-    @Override
     public RecordReader<TypedBytesWritable, TypedBytesWritable> getRecordReader( 
         org.apache.hadoop.mapred.InputSplit split, 
         JobConf job, 
@@ -57,7 +56,6 @@ public class TypedBytesMongoInputFormat implements InputFormat<TypedBytesWritabl
         return new TypedBytesMongoRecordReader(mis.getBase());
     }
 
-    @Override
     public org.apache.hadoop.mapred.InputSplit[] getSplits( JobConf job, int numSplits ){
         final MongoConfig conf = new MongoConfig( job );
         List<org.apache.hadoop.mapreduce.InputSplit> list = MongoSplitter.calculateSplits( conf );
@@ -66,7 +64,8 @@ public class TypedBytesMongoInputFormat implements InputFormat<TypedBytesWritabl
             if (!(list.get(i) instanceof MongoInputSplit)) {
                 throw new IllegalStateException("Calculating mongo splits should return a type of MongoInputSplit!");
             }
-            arr[i] = new OldApiMongoInputSplit((MongoInputSplit) list.get(i));
+            MongoInputSplit mis = (MongoInputSplit) list.get(i);
+            arr[i] = new OldApiMongoInputSplit(mis);
         }
         return arr;
     }
