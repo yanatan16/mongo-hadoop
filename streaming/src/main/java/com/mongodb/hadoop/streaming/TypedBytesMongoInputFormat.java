@@ -95,7 +95,7 @@ public class TypedBytesMongoInputFormat implements InputFormat<TypedBytesWritabl
                 try {
                     key.setValue(kobj);
                 } catch (RuntimeException e) {
-                    throw new RuntimeException("Cannot write type: " + kobj.toString(), e);
+                    throw new RuntimeException("Cannot write type: " + kobj.getClass().getName(), e);
                 }
             }
             val.setValue(reader.getCurrentValue().toMap());
