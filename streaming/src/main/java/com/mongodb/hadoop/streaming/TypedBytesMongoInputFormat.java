@@ -28,6 +28,7 @@ import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.typedbytes.TypedBytesWritable;
 import org.bson.*;
+import org.bson.types.ObjectId;
 
 import java.util.*;
 
@@ -91,6 +92,8 @@ public class TypedBytesMongoInputFormat implements InputFormat<TypedBytesWritabl
             Object kobj = reader.getCurrentKey();
             if (kobj instanceof BSONObject) {
                 key.setValue(((BSONObject) kobj).toMap());
+            } else if (kobj instanceof ObjectId) {
+                key.setValue(((ObjectId) kobj).toString());
             } else {
                 try {
                     key.setValue(kobj);
