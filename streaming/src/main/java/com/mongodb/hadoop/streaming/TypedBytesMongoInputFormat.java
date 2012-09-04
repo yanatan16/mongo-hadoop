@@ -84,24 +84,27 @@ public class TypedBytesMongoInputFormat implements InputFormat<TypedBytesWritabl
             reader.close();
         }
 
+        private void setVal(TypedBytesWritable tbw, Object obj) {
+            try {
+                if (obj instanceof BSONObject) {
+                    tbw.setValue(((BSONObject) obj).toMap());
+                } else if (obj instanceof ObjectId) {
+                    tbw.setValue(((ObjectId) obj).toString());
+                } else {
+                    tbw.setValue(obj);
+                }
+            } catch (RuntimeException e) {
+                throw new RuntimeException("Cannot write type: " + obj.getClass().getName(), e);
+            }
+        }
+
         public boolean next(TypedBytesWritable key, TypedBytesWritable val) {
             if (!reader.nextKeyValue())
                 return false;
             i++;
 
-            Object kobj = reader.getCurrentKey();
-            if (kobj instanceof BSONObject) {
-                key.setValue(((BSONObject) kobj).toMap());
-            } else if (kobj instanceof ObjectId) {
-                key.setValue(((ObjectId) kobj).toString());
-            } else {
-                try {
-                    key.setValue(kobj);
-                } catch (RuntimeException e) {
-                    throw new RuntimeException("Cannot write type: " + kobj.getClass().getName(), e);
-                }
-            }
-            val.setValue(reader.getCurrentValue().toMap());
+            setVal(key, reader.getCurrentKey());
+            setVal(val, reader.getCurrentValue());
             return true;
         }
 
