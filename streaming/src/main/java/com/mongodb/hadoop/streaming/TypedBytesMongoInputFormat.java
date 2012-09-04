@@ -29,7 +29,6 @@ import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.typedbytes.TypedBytesWritable;
 import org.bson.*;
 
-import java.io.*;
 import java.util.*;
 
 // Commons
@@ -68,28 +67,6 @@ public class TypedBytesMongoInputFormat implements InputFormat<TypedBytesWritabl
             arr[i] = new OldApiMongoInputSplit(mis);
         }
         return arr;
-    }
-
-    public class OldApiMongoInputSplit implements org.apache.hadoop.mapred.InputSplit {
-        MongoInputSplit base;
-        public OldApiMongoInputSplit(MongoInputSplit split) {
-            base = split;
-        }
-        public long getLength() {
-            return base.getLength();
-        }
-        public String[] getLocations() {
-            return base.getLocations();
-        }
-        public void readFields( DataInput in ) throws IOException {
-            base.readFields(in);
-        }
-        public void write (final DataOutput out) throws IOException {
-            base.write(out);
-        }
-        public MongoInputSplit getBase() {
-            return base;
-        }
     }
 
     public class TypedBytesMongoRecordReader implements RecordReader<TypedBytesWritable, TypedBytesWritable> {
