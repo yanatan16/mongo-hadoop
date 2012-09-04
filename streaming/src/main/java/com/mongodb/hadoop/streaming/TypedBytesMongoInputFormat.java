@@ -24,7 +24,7 @@ import com.mongodb.hadoop.input.*;
 import com.mongodb.hadoop.util.*;
 import org.apache.commons.logging.*;
 import org.apache.hadoop.conf.*;
-import org.apache.hadoop.mapred.*;
+import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.typedbytes.TypedBytesWritable;
 import org.bson.*;
 
@@ -38,10 +38,11 @@ import java.util.*;
 * TypedBytesMongoInputFormat is a wrapper the TypedBytesMongoInputFormat that transforms all input/output into TypedBytes.
 * This is done so Dumbo can use it.
 */
-public class TypedBytesMongoInputFormat implements org.apache.hadoop.mapred.InputFormat<TypedBytesWritable, TypedBytesWritable> {    
+public class TypedBytesMongoInputFormat extends InputFormat<TypedBytesWritable, TypedBytesWritable> {    
     private static final Log LOG = LogFactory.getLog( TypedBytesMongoInputFormat.class );
 
-    public RecordReader<TypedBytesWritable, TypedBytesWritable> getRecordReader( InputSplit split, JobConf job, Reporter reporter ){
+    @Override
+    public RecordReader<TypedBytesWritable, TypedBytesWritable> createRecordReader( InputSplit split, TaskAttemptContext context ){
         if ( !( split instanceof MongoInputSplit ) )
             throw new IllegalStateException( "Creation of a new RecordReader requires a MongoInputSplit instance." );
 
@@ -50,48 +51,52 @@ public class TypedBytesMongoInputFormat implements org.apache.hadoop.mapred.Inpu
         return new TypedBytesMongoRecordReader(mis);
     }
 
-    public InputSplit[] getSplits( JobConf job, int numSplits ){
-        final MongoConfig conf = new MongoConfig( job );
-        return MongoSplitter.calculateSplits( conf ).toArray(new InputSplit[0]);
+    @Override
+    public List<InputSplit> getSplits( JobContext context ){
+        final Configuration hadoopConfiguration = context.getConfiguration();
+        final MongoConfig conf = new MongoConfig( hadoopConfiguration );
+        return MongoSplitter.calculateSplits( conf );
     }
 
-    public class TypedBytesMongoRecordReader implements RecordReader<TypedBytesWritable, TypedBytesWritable> {
-        MongoRecordReader reader;
-        long i;
+    public class TypedBytesMongoRecordReader extends RecordReader<TypedBytesWritable, TypedBytesWritable> {
+        private MongoRecordReader reader;
 
         public TypedBytesMongoRecordReader(MongoInputSplit split) {
             reader = new MongoRecordReader(split);
-            reader.initialize(split, null);
-            i = 0;
         }
 
-        public void close() {
-            reader.close();
+        @Override
+        public void initialize(InputSplit split, TaskAttemptContext context) {
+            reader.initialize(split, context);
         }
 
-        public boolean next(TypedBytesWritable key, TypedBytesWritable val) {
-            if (!reader.nextKeyValue())
-                return false;
-            i++;
-            key.setValue(reader.getCurrentKey());
-            val.setValue(reader.getCurrentValue());
-            return true;
+        @Override
+        public boolean nextKeyValue() {
+            return reader.nextKeyValue();
         }
 
-        public TypedBytesWritable createKey() {
-            return new TypedBytesWritable();
+        @Override
+        public TypedBytesWritable getCurrentKey() {
+            TypedBytesWritable tbw = new TypedBytesWritable();
+            tbw.setValue(reader.getCurrentKey());
+            return tbw;
         }
 
-        public TypedBytesWritable createValue() {
-            return new TypedBytesWritable();
+        @Override
+        public TypedBytesWritable getCurrentValue() {
+            TypedBytesWritable tbw = new TypedBytesWritable();
+            tbw.setValue(reader.getCurrentValue());
+            return tbw;
         }
 
-        public long getPos() {
-            return i;
-        }
-
+        @Override
         public float getProgress() {
             return reader.getProgress();
+        }
+
+        @Override
+        public void close() {
+            reader.close();
         }
     }
 }

@@ -22,13 +22,12 @@ import com.mongodb.hadoop.util.*;
 import org.apache.commons.logging.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.*;
-import org.apache.hadoop.mapred.InputSplit;
 import org.bson.*;
 
 import java.io.*;
 import java.util.*;
 
-public class MongoInputSplit extends org.apache.hadoop.mapreduce.InputSplit implements Writable, org.apache.hadoop.mapred.InputSplit {
+public class MongoInputSplit extends InputSplit implements Writable {
 
     public MongoInputSplit( MongoURI inputURI,
                             String keyField,
