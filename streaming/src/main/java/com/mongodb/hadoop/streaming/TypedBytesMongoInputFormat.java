@@ -92,7 +92,11 @@ public class TypedBytesMongoInputFormat implements InputFormat<TypedBytesWritabl
             if (kobj instanceof BSONObject) {
                 key.setValue(((BSONObject) kobj).toMap());
             } else {
-                key.setValue(kobj);
+                try {
+                    key.setValue(kobj);
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("Cannot write type: " + kobj.toString(), e);
+                }
             }
             val.setValue(reader.getCurrentValue().toMap());
             return true;
