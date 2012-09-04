@@ -33,3 +33,5 @@ streaming/target/*
 target/*
 .lib/*
 *.gem
+streaming/language_support/python/dist
+streaming/language_support/pymongo_hadoop.egg-info
