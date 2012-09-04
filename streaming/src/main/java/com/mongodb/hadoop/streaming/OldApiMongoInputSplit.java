@@ -6,6 +6,9 @@ import java.io.*;
 
 public class OldApiMongoInputSplit implements InputSplit {
     MongoInputSplit base;
+    public OldApiMongoInputSplit() {
+        base = new MongoInputSplit();
+    }
     public OldApiMongoInputSplit(MongoInputSplit split) {
         base = split;
     }
